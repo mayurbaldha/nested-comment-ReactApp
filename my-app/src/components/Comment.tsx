@@ -1,4 +1,5 @@
-import { IComment, ICommentItem } from "../types/types";
+import { IComment } from "../types/types";
+import { getReplies } from "../utils/util";
 import CommentForm from "./CommentForm";
 
 const Comment = ({
@@ -13,28 +14,10 @@ const Comment = ({
   currentUserId,
   backendComments,
 }:IComment) => {
-  const isEditing =
-    activeComment &&
-    activeComment.id === comment.id &&
-    activeComment.type === "editing";
   const isReplying =
     activeComment &&
-    activeComment.id === comment.id &&
-    activeComment.type === "replying";
-  const fiveMinutes = 300000;
-  const timePassed = new Date().getTime() - new Date(comment.createdAt).getTime() > fiveMinutes;
-  const canDelete =
-    currentUserId === comment.userId && replies.length === 0 && !timePassed;
-  const canReply = Boolean(currentUserId);
-  const canEdit = currentUserId === comment.userId && !timePassed;
+    activeComment.id === comment.id ;
   const createdAt = new Date(comment.createdAt).toLocaleDateString();
-  const getReplies = (commentId:string) =>
-  backendComments
-    .filter((backendComment:ICommentItem) => backendComment.parentId === commentId)
-    .sort(
-      (a:ICommentItem, b:ICommentItem) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
   return (
     <div key={comment.id} className="comment">
       <div className="comment-image-container">
@@ -45,49 +28,19 @@ const Comment = ({
           <div className="comment-author">{comment.username}</div>
           <div className="comment-date">{createdAt}</div>
         </div>
-        {!isEditing && <div className="comment-text">{comment.body}</div>}
-        {/* {isEditing && (
-          <CommentForm
-            submitLabel="Update"
-            hasCancelButton
-            initialText={comment.body}
-            handleSubmit={(text) => updateComment(text, comment.id)}
-            handleCancel={() => {
-              setActiveComment(null);
-            }}
-          />
-        )} */}
+        {<div className="comment-text">{comment.body}</div>}
         <div className="comment-actions">
-          {canReply && (
+          {Boolean(currentUserId) && (
             <div
               className="comment-action"
               onClick={() =>
-               { 
-                console.log("replying",comment.id);
-                setActiveComment({ id: comment.id, type: "replying" });}
+               {
+                setActiveComment({ id: comment.id });}
               }
             >
               Reply
             </div>
           )}
-          {/* {canEdit && (
-            <div
-              className="comment-action"
-              onClick={() =>
-                setActiveComment({ id: comment.id, type: "editing" })
-              }
-            >
-              Edit
-            </div>
-          )}
-          {canDelete && (
-            <div
-              className="comment-action"
-              onClick={() => deleteComment(comment.id)}
-            >
-              Delete
-            </div>
-          )} */}
           <div className="comment-action">
             Share
           </div>
@@ -103,7 +56,6 @@ const Comment = ({
           <CommentForm
             submitLabel="Reply"
             handleSubmit={(text) => {
-              console.log("parentID", activeComment.id);
               addComment(text, activeComment.id);
             }} 
             initialText={""} 
@@ -124,7 +76,7 @@ const Comment = ({
                 deleteComment={deleteComment}
                 addComment={addComment}
                 parentId={comment.id}
-                replies={getReplies(reply.id)}
+                replies={getReplies(reply.id,backendComments)}
                 currentUserId={currentUserId}
                 backendComments={backendComments}
               />

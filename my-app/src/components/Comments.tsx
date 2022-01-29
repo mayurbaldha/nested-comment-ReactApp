@@ -1,24 +1,16 @@
 import { useEffect, useState } from "react";
+import { IActiveComment, ICommentItem, IComments } from "../types/types";
 import {
   createComment as createCommentApi, deleteComment as deleteCommentApi, getComments as getCommentsApi, updateComment as updateCommentApi
-} from "../dataSource";
-import { IActiveComment, ICommentItem, IComments } from "../types/types";
+} from "../utils/dataSource";
+import { getReplies } from "../utils/util";
 import Comment from "./Comment";
 import CommentForm from "./CommentForm";
-const Comments = ({ commentsUrl, currentUserId }:IComments) => {
+const Comments = ({ currentUserId }:IComments) => {
   const [backendComments, setBackendComments] = useState<ICommentItem[]>([]);
   const [activeComment, setActiveComment] = useState<IActiveComment | null>(null);
-  const getReplies = (commentId:string) =>
-    backendComments
-      .filter((backendComment:ICommentItem) => backendComment.parentId === commentId)
-      .sort(
-        (a:ICommentItem, b:ICommentItem) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
   const addComment = (text:string, parentId:string| null) => {
     createCommentApi(text, parentId).then((comment:ICommentItem) => {
-      console.log(comment);
-      console.log([comment, ...backendComments]);
       setBackendComments([comment, ...backendComments]);
       setActiveComment(null);
     });
@@ -61,7 +53,7 @@ const Comments = ({ commentsUrl, currentUserId }:IComments) => {
     return <Comment
       key={rootComment.id}
       comment={rootComment}
-      replies={getReplies(rootComment.id)}
+      replies={getReplies(rootComment.id,backendComments)}
       activeComment={activeComment}
       setActiveComment={setActiveComment}
       addComment={addComment}

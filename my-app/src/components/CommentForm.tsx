@@ -1,11 +1,5 @@
 import { useState } from "react";
-export interface ICommentForm{
-  initialText: string;
-  hasCancelButton: boolean;
-  handleSubmit: (text: string,parentId?:string) => void;
-  handleCancel: () => void;
-  submitLabel: string;
-}
+import { ICommentForm } from "../types/types";
 const CommentForm = ({
   handleSubmit,
   submitLabel,
