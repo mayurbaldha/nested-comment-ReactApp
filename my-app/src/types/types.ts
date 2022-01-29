@@ -15,10 +15,8 @@ export interface IComment {
     replies: ICommentItem[];
     setActiveComment: (commentId: IActiveComment) => void;
     activeComment: IActiveComment | null;
-    updateComment: (text: string, id: string) => void;
-    deleteComment: (commentId: string) => void;
     addComment: (text: string, id: string) => void;
-    parentId: string;
+    parentId: string | null;
     currentUserId: string;
     backendComments: ICommentItem[];
 }

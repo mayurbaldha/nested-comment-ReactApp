@@ -14,11 +14,3 @@ export const createComment = async (text:string, parentId: string| null = null):
     createdAt: new Date().toISOString(),
   };
 };
-
-export const updateComment = async (text:string): Promise<any>  => {
-  return { text };
-};
-
-export const deleteComment = async () => {
-  return {};
-};
