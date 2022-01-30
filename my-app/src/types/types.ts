@@ -1,5 +1,4 @@
 export interface IComments {
-    commentsUrl: string;
     currentUserId: string;
 }
 export interface ICommentItem {
@@ -10,16 +9,21 @@ export interface ICommentItem {
     parentId: string | null,
     createdAt: string,
 }
-export interface IActiveComment { id: string, type: string }
+export interface IActiveComment { id: string }
 export interface IComment {
     comment: ICommentItem;
     replies: ICommentItem[];
-    setActiveComment: (comment: any) => void;
+    setActiveComment: (commentId: IActiveComment) => void;
     activeComment: IActiveComment | null;
-    updateComment: (text: string, id: string) => void;
-    deleteComment: (commentId: string) => void;
     addComment: (text: string, id: string) => void;
-    parentId: any;
+    parentId: string | null;
     currentUserId: string;
-    backendComments: any;
+    backendComments: ICommentItem[];
 }
+export interface ICommentForm{
+    initialText: string;
+    hasCancelButton: boolean;
+    handleSubmit: (text: string,parentId?:string) => void;
+    handleCancel: () => void;
+    submitLabel: string;
+  }
